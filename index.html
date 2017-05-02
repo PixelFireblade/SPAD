@@ -1,0 +1,68 @@
+<html>
+  <head>
+    <title>ADtest</title>
+    <script src="/jquery.min.js"></script>
+    <script src="/urlParams/urlParams.js"></script>
+    <script>if(urlParams.xyz != 'param') {
+        window.location = 'https://i.giphy.com/FQxGUCUEwMUQ8.gif';
+      }
+      </script>
+  </head>
+  <body>
+    <div class="result">
+    </div>
+    <script>
+        var imgs = document.getElementsByTagName('img');
+        var i = 0;
+      const toDataURL = url => fetch(url)
+        .then(response => response.blob())
+        .then(blob => new Promise((resolve, reject) => {
+          var reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+      }));
+      var url = null;
+      if (urlParams.url == undefined) {
+        while (url == null) {
+          url = prompt("URL to get:");
+          //window.location = "https://booligoosh.github.io/ADtest/index.html?url=" + url;
+        }
+      }
+      else {
+        url = urlParams.url;
+      }
+      var preserveData = "";
+      $.get( "https://cors-anywhere.herokuapp.com/" + url, function( data ) {
+        $( ".result" ).html( "\"\"" + data + "\"\"" );
+        preserveData = data;
+        //alert( "Load was performed." );
+      });
+      setTimeout(useData,1001);
+      function useData() {
+        //alert(preserveData);
+        $( ".result" ).html(preserveData);
+        setTimeout(addImages,1001);
+      }
+      function imgRep() {
+        console.log('hey' + i);
+        img = imgs[i];
+        if(img.srcset != undefined) {
+          img.srcset = '';
+        }
+        if(img.src.split('')[0] != 'd'){
+          toDataURL('https://cors-anywhere.herokuapp.com/' + img.src.toString())
+            .then(result => img.src = result)
+            .catch(error => console.error(error)); ;
+        }
+        i = i + 1;
+        if (i < imgs.length) {
+          setTimeout(imgRep,100);
+        }
+      }
+      function addImages() {
+        imgRep()
+      }
+    </script>
+  </body>
+</html>
